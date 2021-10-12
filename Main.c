@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <time.h>
+
+#include "Super.h"
+
+/*
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+*/
+
+#ifndef NDEBUG
+static void check(union Super *a) { 
+	// Check the header for the expected values and bounds of each call
+
+	for(uint64_t i = 1; i < 1000; i++) {
+		const uint64_t n = Super_Range(a, i);
+		assert(n < i);
+	}
+
+	for(int i = 0; i < 10000; i++) {
+		uint64_t n = Super_Between(a, 10, 1000);
+		assert(n >= 10 && n < 1000);
+	}
+
+	for(int i = 0; i < 1000; i++) {
+		double n = Super_Uniform(a);
+		assert(n >= 0.0 && n <= 1.0);
+	}
+
+	for(int i = 0; i < 1000; i++) {
+		double n = Super_Gaussian(a);
+		assert(n >= -6.0 && n <= 6.0);
+	}
+
+	// Random array test
+	uint8_t temp[15];
+	const int size = sizeof(temp);
+
+	for(size_t i = 0; i < size; i++) {
+		temp[i] = 0;
+	}
+	
+	Super_Copy(a, temp, size);
+	uint8_t freq = 0;
+
+	for(size_t i = 0; i < size; i++) {
+		if(temp[i] == 0x00) {
+			freq++;
+		}
+	}
+
+	assert(freq <= 2); // More than two zeroes could happen, but would be very rare
+}
+#endif
+
+int main(void) {
+	union Super a;
+	a.seed = 1; 
+	// Super(&a); // Needed when the seed has a low number value (such as above)
+	// assert(Super(&a) == 0xBAA09CA73F3265B4); // Correctness check, known good value
+
+	// a.seed = (__uint128_t) time(NULL); // An "okay" source of randomness
+	// Super(&a);
+
+	for(uint64_t i = 0; i < UINT64_MAX; i++) {
+		uint64_t n = Super(&a);
+		printf("%016lX\n", n);
+		// if(n == 0) {
+		// 	printf("Zero'd: %lu\n", i);
+		// 	break;
+		// }
+		// if(i % 10000000000 == 0) {
+		// 	printf("%lu\n", i);
+		// }
+	}
+
+	#ifndef NDEBUG
+	check(&a);
+	#endif
+}
