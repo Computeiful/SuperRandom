@@ -1,13 +1,11 @@
-# Lean - QuickRandom
+# SuperRandom
 
-This is a Lehmer PRNG in C which passes TestU01's BigCrunch. For more info see [here](https://lemire.me/blog/2019/03/19/the-fastest-conventional-random-number-generator-that-can-pass-big-crush/).
+This is an [LCG](https://en.wikipedia.org/wiki/Linear_congruential_generator) based PRNG in C. It was made as a safer version of [this PRNG](https://github.com/Computeiful/QuickRandom), though it is not quite as fast.
 
-This generator focuses on speed and thus has some operating constraints. See `Main.c` for usage examples.
+This PRNG is **NOT** zero sensitive, has a very long period and tries to mitigate the known issue of LCGs having bad quality lower bits.
+
+See `Main.c` for usage examples.
 
 ---
 
-This PRNG is zero-sensitive (though the chance of hitting a zero is around 1 in 340 undecillion). I have tested this PRNG using a seed of `1` up to 21,520,000,000,000 iterations (~156.6 TB) without encountering a zero, so a seed of `1` is safe for most use cases. 
-
-There are no guarantees as to the PRNG period. 
-
-I've found speeds of ~5 GB/s can be achieved on modern hardware, though YMMV. 
+I've found speeds of ~3 GB/s can be achieved on modern hardware, though YMMV.

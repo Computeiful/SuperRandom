@@ -78,22 +78,14 @@ static void check(union Super *a) {
 int main(void) {
 	union Super a;
 	a.seed = 1; 
-	// Super(&a); // Needed when the seed has a low number value (such as above)
-	// assert(Super(&a) == 0xBAA09CA73F3265B4); // Correctness check, known good value
+	Super(&a); // Needed when the seed has a low number value (such as above)
+	assert(Super(&a) == 0xC56596C6E3EA6717); // Correctness check, known good value (when seed = 1)
 
 	// a.seed = (__uint128_t) time(NULL); // An "okay" source of randomness
 	// Super(&a);
 
-	for(uint64_t i = 0; i < UINT64_MAX; i++) {
-		uint64_t n = Super(&a);
-		printf("%016lX\n", n);
-		// if(n == 0) {
-		// 	printf("Zero'd: %lu\n", i);
-		// 	break;
-		// }
-		// if(i % 10000000000 == 0) {
-		// 	printf("%lu\n", i);
-		// }
+	for(int i = 0; i < 10; i++) {
+		printf("%08X\n", (int) Super(&a));
 	}
 
 	#ifndef NDEBUG
