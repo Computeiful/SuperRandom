@@ -50,12 +50,22 @@ static void check(union Super *a) {
 	}
 
 	for(int i = 0; i < 1000; i++) {
+		float n = Super_Uniformf(a);
+		assert(n >= 0.0f && n <= 1.0f);
+	}
+
+	for(int i = 0; i < 1000; i++) {
 		double n = Super_Gaussian(a);
 		assert(n >= -6.0 && n <= 6.0);
 	}
 
+	for(int i = 0; i < 1000; i++) {
+		float n = Super_Gaussianf(a);
+		assert(n >= -6.0f && n <= 6.0f);
+	}
+
 	// Random array test
-	uint8_t temp[15];
+	uint8_t temp[31];
 	const int size = sizeof(temp);
 
 	for(size_t i = 0; i < size; i++) {
